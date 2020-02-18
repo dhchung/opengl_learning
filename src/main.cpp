@@ -1,7 +1,9 @@
+#include <glad/glad.h>
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+
 
 static void error_callback(int error, const char* description)
 {
