@@ -1,5 +1,6 @@
 #include<iostream>
 #include<glad/glad.h>
+
 #include<GLFW/glfw3.h>
  
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -27,8 +28,16 @@ int main() {
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
  
-
-출처: https://gyutts.tistory.com/87 [Game Developer Q.bot]BIT);
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cout << "GLAD를 초기화하는데 실패했다.\n";
+        return -1;
+    }
+    
+    while (!glfwWindowShouldClose(window)) {
+        processInput(window);
+ 
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
  
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -37,3 +46,4 @@ int main() {
     glfwTerminate();
     return 0;
 }
+

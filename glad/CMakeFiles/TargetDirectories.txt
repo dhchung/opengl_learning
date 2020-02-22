@@ -1,3 +1,0 @@
-/home/wakanda/test/opengl_cmake_test/glad/CMakeFiles/rebuild_cache.dir
-/home/wakanda/test/opengl_cmake_test/glad/CMakeFiles/glad.dir
-/home/wakanda/test/opengl_cmake_test/glad/CMakeFiles/edit_cache.dir
