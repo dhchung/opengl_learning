@@ -3,7 +3,7 @@ project(myopengl)
 add_subdirectory(glad/)
 
 set(CMAKE_CXX_COMPILER g++)
-set(SOURCES src/test_glad.cpp glad/src/glad.c)
+set(SOURCES src/learnopengl_hellowindow.cpp glad/src/glad.c)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
