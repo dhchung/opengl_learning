@@ -87,37 +87,41 @@ int main() {
 
 
 
-    float vertices[] = {
-         0.5f,  0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
+    float vertices_1[] = {
+        //First Triangle
+        -1.0f, -0.5f, 0.0f,
+         0.0f, -0.5f, 0.0f,
         -0.5f,  0.5f, 0.0f
     };
-    unsigned int indices[] = {
-        0,1,3,
-        1,2,3
+
+    float vertices_2[] = {
+        //Second Triangle
+         0.0f, -0.5f, 0.0f,
+         1.0f, -0.5f, 0.0f,
+         0.5f,  0.5f, 0.0f
     };
 
-    unsigned int VBO, VAO, EBO;
-    glGenBuffers(1, &VBO);
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &EBO);
+    unsigned int VBO[2], VAO[2];
+    glGenBuffers(2, VBO);
+    glGenVertexArrays(2, VAO);
     
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
+    glBindVertexArray(VAO[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_1), vertices_1, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glBindVertexArray(VAO[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_2), vertices_2, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     glViewport(0,0,800,600); // Setup the viewport size (location of the viewport in the window, width and height of the window)
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -128,20 +132,20 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
-        // glBindBuffer
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(VAO[0]);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
 
+        glBindVertexArray(VAO[1]);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
 
         glfwSwapBuffers(window); //e.g. double buffer -> Swap the color buffer
         glfwPollEvents(); // Check any events(keyboard or mouse), update the window status, and callback the functions        
     }
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(2, VAO);
+    glDeleteBuffers(2, VBO);
 
     glfwTerminate();
     return 0;
