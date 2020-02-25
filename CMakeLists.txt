@@ -3,12 +3,15 @@ project(myopengl)
 add_subdirectory(glad/)
 
 set(CMAKE_CXX_COMPILER g++)
-set(SOURCES src/learnopengl_hellotriangle_4.cpp glad/src/glad.c)
+set(SOURCES src/helloshader/learnopengl_shader_3.cpp)
+set(LIB_SOURCES glad/src/glad.c)
+set(CLASS_SOURCES classes/shader.cpp classes/stb_image.cpp)
+
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 3.2 REQUIRED)
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES} ${LIB_SOURCES} ${CLASS_SOURCES})
 include_directories(${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS})
-
+include_directories(classes/)
 target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} glfw ${GLEW_LIBRARIES} glad ${CMAKE_DL_LIBS})

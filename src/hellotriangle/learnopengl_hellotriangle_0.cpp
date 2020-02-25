@@ -126,7 +126,7 @@ int main() {
 
         glfwSwapBuffers(window); //e.g. double buffer -> Swap the color buffer
         glfwPollEvents(); // Check any events(keyboard or mouse), update the window status, and callback the functions        
-    }
+    }카이스트본원
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
