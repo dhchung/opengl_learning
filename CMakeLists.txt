@@ -3,7 +3,7 @@ project(myopengl)
 add_subdirectory(glad/)
 
 set(CMAKE_CXX_COMPILER g++)
-set(SOURCES src/hellotexture/learnopengl_texture_4.cpp)
+set(SOURCES src/04_texture/texture_1.cpp)
 set(LIB_SOURCES glad/src/glad.c)
 set(CLASS_SOURCES classes/shader.cpp classes/stb_image.cpp)
 
