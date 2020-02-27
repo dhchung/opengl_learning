@@ -3,9 +3,9 @@ project(myopengl)
 add_subdirectory(glad/)
 
 set(CMAKE_CXX_COMPILER g++)
-set(SOURCES src/04_texture/texture_1.cpp)
+set(SOURCES src/06_camera/camera_0.cpp)
 set(LIB_SOURCES glad/src/glad.c)
-set(CLASS_SOURCES classes/shader.cpp classes/stb_image.cpp)
+set(CLASS_SOURCES classes/shader.cpp classes/stb_image.cpp classes/camera.cpp)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
