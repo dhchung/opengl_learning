@@ -51,6 +51,8 @@ public:
 
     float Yaw;
     float Pitch;
+    float OriginalSpeed;
+    float FastSpeed;
     float MovementSpeed;
     float MouseSensitivity;
     float Zoom;

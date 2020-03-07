@@ -53,7 +53,7 @@ int main() {
     }
 
     //Shaders
-    Shader lightingShader("shaders/shader_color.vs", "shaders/shader_light_caster.fs");
+    Shader lightingShader("shaders/shader_color.vs", "shaders/shader_multiple_light.fs");
     Shader lampShader("shaders/shader_color_lamp.vs", "shaders/shader_color_lamp.fs");
 
     float vertices[] = {
@@ -157,24 +157,52 @@ int main() {
     lightingShader.setInt("material.specular", 1);
     lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
     lightingShader.setFloat("material.shininess", 32.0f);
-    lightingShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-    lightingShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
-    lightingShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-    lightingShader.setVec3("light.direction", camera.Front);
+
+    lightingShader.setVec3("dirlight.direction", -0.2f, -1.0f, -0.3f);
+    lightingShader.setVec3("dirlight.ambient", glm::vec3(0.05f));
+    lightingShader.setVec3("dirlight.diffuse", glm::vec3(0.05f));
+    lightingShader.setVec3("dirlight.specular", glm::vec3(0.45f));
+
+    glm::vec3 pointLightPositions[] = {
+        glm::vec3( 0.7f,  0.2f,  2.0f),
+        glm::vec3( 2.3f, -3.3f, -4.0f),
+        glm::vec3(-4.0f,  2.0f, -12.0f),
+        glm::vec3( 0.0f,  0.0f, -3.0f)
+    };
+
+    std::string point_light = "pointLights";
+    for(unsigned int i = 0; i < 4; ++i) {
+        std::string struct_name = point_light+"["+std::to_string(i)+"]";
+        lightingShader.setVec3(struct_name+".position", pointLightPositions[i]);
+        lightingShader.setFloat(struct_name+".constant", 1.0f);
+        lightingShader.setFloat(struct_name+".linear", 0.09f);
+        lightingShader.setFloat(struct_name+".quadratic", 0.032f);
+
+        lightingShader.setVec3(struct_name+".ambient", glm::vec3(0.05f));
+        lightingShader.setVec3(struct_name+".diffuse", glm::vec3(0.5f));
+        lightingShader.setVec3(struct_name+".specular", 1.0f, 1.0f, 1.0f);
+    }
+
+
+
 
     glm::mat4 model = glm::mat4(1.0f);
     lightingShader.setMat4("model", model);
-    lightingShader.setVec3("light.position", camera.Position);
-    lightingShader.setFloat("light.cutoff", glm::cos(glm::radians(12.5f)));
-    lightingShader.setFloat("light.outercutoff", glm::cos(glm::radians(17.5f)));
+    lightingShader.setVec3("spotLight.position", camera.Position);
+    lightingShader.setVec3("spotLight.direction", camera.Front);
+    lightingShader.setVec3("spotLight.ambient", glm::vec3(0.0f));
+    lightingShader.setVec3("spotLight.diffuse", glm::vec3(0.8f));
+    lightingShader.setVec3("spotLight.specular", glm::vec3(0.5f));
 
-    lightingShader.setFloat("light.constant", 1.0f);
-    lightingShader.setFloat("light.linear", 0.09f);
-    lightingShader.setFloat("light.quadratic", 0.032f);
+    lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+    lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(17.5f)));
+    lightingShader.setFloat("spotLight.constant", 1.0f);
+    lightingShader.setFloat("spotLight.linear", 0.09f);
+    lightingShader.setFloat("spotLight.quadratic", 0.032f);
 
     while(!glfwWindowShouldClose(window)) { //Check if there's any command to close the window to GLFW
         processInput(window);
-        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
 
@@ -191,8 +219,8 @@ int main() {
         lightingShader.setMat4("view", view);
         lightingShader.setMat4("projection", projection);
         lightingShader.setVec3("viewPos", camera.Position);
-        lightingShader.setVec3("light.direction", camera.Front);
-        lightingShader.setVec3("light.position", camera.Position);
+        lightingShader.setVec3("spotLight.direction", camera.Front);
+        lightingShader.setVec3("spotLight.position", camera.Position);
 
         glm::vec3 lightColor;
         // lightColor.x = sin(glfwGetTime() * 2.0f);
@@ -218,19 +246,20 @@ int main() {
 
         glBindVertexArray(0);
 
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.2f));
-        
-        lampShader.use();
-        lampShader.setMat4("model", model);
-        lampShader.setMat4("view", view);
-        lampShader.setMat4("projection", projection);
-        lampShader.setVec3("lightColor", lightColor);
-
         glBindVertexArray(lightVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        for(unsigned int i =0; i < 4; ++i) {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, pointLightPositions[i]);
+            model = glm::scale(model, glm::vec3(0.2f));
+            
+            lampShader.use();
+            lampShader.setMat4("model", model);
+            lampShader.setMat4("view", view);
+            lampShader.setMat4("projection", projection);
+            lampShader.setVec3("lightColor", lightColor);
 
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
         glfwSwapBuffers(window); //e.g. double buffer -> Swap the color buffer
         glfwPollEvents(); // Check any events(keyboard or mouse), update the window status, and callback the functions        
@@ -258,7 +287,13 @@ void processInput(GLFWwindow * window) {
     float currentFrame = glfwGetTime();
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
-    float cameraSpeed = 2.5f*deltaTime;
+
+    if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+        camera.MovementSpeed = camera.FastSpeed;
+    } else {
+        camera.MovementSpeed = camera.OriginalSpeed;
+    }
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         camera.ProcessKeyboard(FORWARD, deltaTime);
     }
