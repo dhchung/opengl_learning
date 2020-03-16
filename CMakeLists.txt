@@ -12,7 +12,25 @@ find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 3.2 REQUIRED)
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${LIB_SOURCES} ${CLASS_SOURCES})
-include_directories(${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS})
+if (assimp_FOUND)
+    set(ASSIMP_LIBRARY "assimp")
+    add_library(${ASSIMP_LIBRARY} SHARED IMPORTED)
+    set_target_properties(${ASSIMP_LIBRARY} PROPERTIES IMPORTED_LOCATION "${ASSIMP_LIBRARY_DIRS}/libassimp.so")
+endif(assimp_FOUND)
+
+add_executable(${PROJECT_NAME} 
+               ${SOURCES} ${LIB_SOURCES} ${CLASS_SOURCES})
+
+include_directories(${OPENGL_INCLUDE_DIRS} 
+                    ${GLUT_INCLUDE_DIRS} 
+                    ${GLM_INCLUDE_DIRS})
+
 include_directories(classes/)
-target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} glfw ${GLEW_LIBRARIES} ${GLM_LIBRARY_DIRS} glad ${CMAKE_DL_LIBS})
+target_link_libraries(${PROJECT_NAME}
+                      ${OPENGL_LIBRARIES} 
+                      ${GLUT_LIBRARIES} 
+                      glfw 
+                      ${GLEW_LIBRARIES} 
+                      ${GLM_LIBRARY_DIRS}
+                      ${ASSIMP_LIBRARY}
+                      glad ${CMAKE_DL_LIBS})
