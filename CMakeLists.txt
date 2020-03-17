@@ -3,7 +3,7 @@ project(myopengl)
 add_subdirectory(glad/)
 
 set(CMAKE_CXX_COMPILER g++)
-set(SOURCES src/02_Lighting/01_Colors/color_3.cpp)
+set(SOURCES src/03_Model_loading/model_loading.cpp)
 set(LIB_SOURCES glad/src/glad.c)
 set(CLASS_SOURCES 
     classes/shader.cpp 
@@ -12,10 +12,12 @@ set(CLASS_SOURCES
     classes/mesh.cpp
     classes/model.cpp)
 
+    
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 3.2 REQUIRED)
+find_package(ASSIMP REQUIRED)
 
 if (assimp_FOUND)
     set(ASSIMP_LIBRARY "assimp")
@@ -28,7 +30,8 @@ add_executable(${PROJECT_NAME}
 
 include_directories(${OPENGL_INCLUDE_DIRS} 
                     ${GLUT_INCLUDE_DIRS} 
-                    ${GLM_INCLUDE_DIRS})
+                    ${GLM_INCLUDE_DIRS}
+                    ${ASSIMP_LIBRARY_DIRS})
 
 include_directories(classes/)
 target_link_libraries(${PROJECT_NAME}

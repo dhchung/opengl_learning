@@ -8,6 +8,9 @@ Mesh::Mesh(vector<Vertex> vertices,
     this->textures = textures;
     setupMesh();
 }
+Mesh::~Mesh() {
+    
+}
 
 void Mesh::Draw(Shader shader) {
     unsigned int diffuseNr = 1;
