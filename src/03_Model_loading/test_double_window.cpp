@@ -52,7 +52,6 @@ int main() {
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-
     //GLAD : take care of the OpenGL function pointer : Need to initialize it before calling OpenGL functions
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) { //glfwGetProcAddress : Get correct functions regarding to OS or compile environment
         std::cout<< "Failed to initialize GLAD" << std::endl;
@@ -87,6 +86,7 @@ int main() {
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+
     }
 
     glfwTerminate();

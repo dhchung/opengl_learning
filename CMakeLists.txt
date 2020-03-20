@@ -3,14 +3,14 @@ project(myopengl)
 add_subdirectory(glad/)
 
 set(CMAKE_CXX_COMPILER g++)
-set(SOURCES src/03_Model_loading/model_loading.cpp)
+set(SOURCES src/03_Model_loading/test_double_window.cpp)
 set(LIB_SOURCES glad/src/glad.c)
 set(CLASS_SOURCES 
     classes/shader.cpp 
     classes/stb_image.cpp 
     classes/camera.cpp 
     classes/mesh.cpp
-    classes/model.cpp)
+    )
 
     
 find_package(OpenGL REQUIRED)
@@ -40,5 +40,5 @@ target_link_libraries(${PROJECT_NAME}
                       glfw 
                       ${GLEW_LIBRARIES} 
                       ${GLM_LIBRARY_DIRS}
-                      ${ASSIMP_LIBRARY}
+                      assimp
                       glad ${CMAKE_DL_LIBS})
