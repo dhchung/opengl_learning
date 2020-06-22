@@ -12,7 +12,7 @@ enum Camera_Movement{
     RIGHT
 };
 
-const float YAW = -90.0f;
+const float YAW = -180.0f;
 const float PITCH = 0.0f;
 const float SPEED = 2.5f;
 const float SENSITIVITY = 0.1f;
@@ -35,9 +35,12 @@ public:
            float pitch);
     
     glm::mat4 GetViewMatrix();
+    glm::mat4 GetViewMatrix_right();
     void ProcessKeyboard(Camera_Movement direction, float deltaTime);
     void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
     void ProcessMouseScroll(float yoffset);
+
+    void ProcessInput(float dx, float dy, float dz, float droll, float dpitch, float dyaw);
 
 private:
     void updateCameraVectors();

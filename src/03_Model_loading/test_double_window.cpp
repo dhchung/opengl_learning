@@ -16,7 +16,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
 
-int screenWidth = 800;
+int screenWidth = 1600;
 int screenHeight = 600;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -64,16 +64,17 @@ int main() {
     Shader ourShader("shaders/model_loading/model_loading.vs", "shaders/model_loading/model_loading.fs");
 
     Model ourModel("assets/objects/nanosuit/nanosuit.obj");
+    // Model ourModel("assets/objects/obj_test/airboat.obj");
     
 
     while(!glfwWindowShouldClose(window)) { //Check if there's any command to close the window to GLFW
-
         processInput(window);
 
         glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glViewport(0, 0, screenWidth/2, screenHeight);
         ourShader.use();
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)screenWidth/(float)screenHeight, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)screenWidth/2/(float)screenHeight, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
@@ -84,9 +85,25 @@ int main() {
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
 
+        glViewport(screenWidth/2, 0, screenWidth/2, screenHeight);
+        
+        // ourShader.use();
+        projection = glm::perspective(glm::radians(camera.Zoom), (float)screenWidth/2/(float)screenHeight, 0.1f, 100.0f);
+        view = camera.GetViewMatrix_right();
+        ourShader.setMat4("projection", projection);
+        ourShader.setMat4("view", view);
+
+        // glm::mat4 model = glm::mat4(1.0f);
+        // model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
+        // model = glm::scale(model, glm::vec3(0.2f));
+        ourShader.setMat4("model", model);
+        ourModel.Draw(ourShader);
+
+        // camera.ProcessInput(-0.01,0.0,0.0,0.0,0.0,0.0);
+
+
         glfwSwapBuffers(window);
         glfwPollEvents();
-
     }
 
     glfwTerminate();

@@ -1,4 +1,5 @@
 #include "camera.h"
+#include <iostream>
 Camera::Camera(glm::vec3 position,
                glm::vec3 up,
                float yaw, 
@@ -40,6 +41,23 @@ glm::mat4 Camera::GetViewMatrix() {
     return glm::lookAt(Position, Position + Front, Up);
 }
 
+glm::mat4 Camera::GetViewMatrix_right() {
+    glm::vec3 Position_R;
+    glm::vec4 rel_pos_R(-1.0, 0.0, 0.0, 1.0);
+    glm::mat4 trans(1.0);
+    trans = glm::rotate(trans, glm::radians(-Yaw), glm::vec3(0.0, 1.0, 0.0));
+    trans = glm::rotate(trans, glm::radians(-Pitch), glm::vec3(1.0, 0.0, 0.0));
+    // trans = glm::translate(trans, glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::vec4 temp(1.0);
+    temp = trans*rel_pos_R;
+    Position_R.x = temp.x;
+    Position_R.y = temp.y;
+    Position_R.z = temp.z;
+
+    Position_R += Position;
+    return glm::lookAt(Position_R, Position_R + Front, Up);
+}
+
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime) {
     float velocity = MovementSpeed * deltaTime;
     if(direction == FORWARD) {
@@ -58,12 +76,30 @@ void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime) {
     }
 }
 
+void Camera::ProcessInput(float dx, float dy, float dz,
+                          float droll = 0.0f, float dpitch = 0.0f, float dyaw = 0.0f) {
+
+    glm::vec4 temp(Position.x, Position.y, Position.z, 1.0f);
+    glm::mat4 trans(1.0f);
+    trans = glm::rotate(trans, glm::radians(droll), glm::vec3(0.0f, 0.0f, 1.0f));
+    trans = glm::rotate(trans, glm::radians(dpitch), glm::vec3(1.0f, 0.0f, 0.0f));
+    trans = glm::rotate(trans, glm::radians(dyaw), glm::vec3(0.0f, 1.0f, 0.0f));
+    trans = glm::translate(trans, glm::vec3(dx, dy, dz));
+    // trans = glm::inverse(trans);
+    temp = trans*temp;
+    Position.x = temp.x;
+    Position.y = temp.y;
+    Position.z = temp.z;
+
+}
+
+
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch) {
     xoffset *= MouseSensitivity;
     yoffset *= MouseSensitivity;
 
     Yaw += xoffset;
-    Pitch += yoffset;
+    Pitch -= yoffset;
 
     if(constrainPitch) {
         if(fabs(Pitch) > 89.0f) {
@@ -86,11 +122,21 @@ void Camera::ProcessMouseScroll(float yoffset) {
 }
 
 void Camera::updateCameraVectors() {
+    glm::vec4 rel_pos_R(0.0, 0.0, 1.0, 1.0);
+    glm::mat4 trans(1.0);
+    // trans = glm::translate(trans, glm::vec3(1.0f, 0.0f, 0.0f));
+    trans = glm::rotate(trans, glm::radians(-Pitch), glm::vec3(1.0, 0.0, 0.0));
+    trans = glm::rotate(trans, glm::radians(-Yaw), glm::vec3(0.0, 1.0, 0.0));
+    glm::vec4 temp(1.0f);
+    temp = trans*rel_pos_R;
+
     glm::vec3 front;
-    front.x = cos(glm::radians(Yaw) * cos(glm::radians(Pitch)));
-    front.y = sin(glm::radians(Pitch));
-    front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+    front.x = temp.x;
+    front.y = temp.y;
+    front.z = temp.z;
+    
     Front = glm::normalize(front);
+
 
     Right = glm::normalize(glm::cross(Front, WorldUp));
     Up = glm::normalize(glm::cross(Right, Front));
